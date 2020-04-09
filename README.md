@@ -20,4 +20,13 @@ In order to do so, `book_trackR` will:
   2. Quality (e.g. fair, like new, very good)
   3. Price (including shipping? otherwise store shipping separately)
   4. Seller (e.g. Amazon, Half-Priced Books, Powells)
-  
+
+## Data Sources
+
+1. Amazon
+  1. API seems to only be available for sellers and affiliates (so I guess I'll scrape)
+2. Half-Priced Books
+  1. Terms of Use explicitly exclude crawling :(
+  2. No obvious API
+3. Powells
+  1. The Powell's Partner program has inventory data, but is not accepting new applicants right now (presumably due to covid19)
