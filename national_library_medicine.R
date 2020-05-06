@@ -22,3 +22,8 @@ searchnlm <- function(term) {
     xml_siblings %>%
     map(extract_nlm_entry)
 }
+
+test <- searchnlm("cholera")
+
+url <- paste0(url_base, "&term=cholera")
+test2 <- read_xml(url)
