@@ -26,7 +26,12 @@ parse_document <- function(document) {
   parsed
 }
 
-# takes a search term and queries the National Library of Medicine
+#' Takes a search term and queries the National Library of Medicine
+#' 
+#' @param term The search term to query
+#' @param retmax The number of observations you want to query. Defaults to 10.
+#' 
+#' @example searchnlm("opioid")
 # term can be passed as a string with spaces, which will be treated as ANDs
 # or as a a character vector, where each element will be treated as ORs (in the future)
 searchnlm <- function(term, retmax = NA) {
