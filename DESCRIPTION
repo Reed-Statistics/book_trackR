@@ -8,3 +8,6 @@ Description: Queries the National Library of Medicine and returns results in a t
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports:
+  tidyverse,
+  xml2
