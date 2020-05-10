@@ -29,6 +29,7 @@ parse_document <- function(document) {
 #' Takes a search term and queries the National Library of Medicine
 #'
 #' @param term The search term to query. By default spaces will be parsed as ANDs, and seperate elements in the vector as ORs.
+#' @param field The field to query. Defaults to querying all fields. Includes choices such as "creator", "subject", "title", and "description"
 #' @param retmax The number of observations you want to query. Defaults to 10.
 #' @param email Your email address as a string. Optional--it allows the National Library of Medicine to contact you if there are problems with your queries.
 #'
@@ -36,7 +37,7 @@ parse_document <- function(document) {
 #' @export
 # term can be passed as a string with spaces, which will be treated as ANDs
 # or as a a character vector, where each element will be treated as ORs (in the future)
-searchnlm <- function(term, retmax = NA, email = NA) {
+searchnlm <- function(term, field = NA, retmax = NA, email = NA) {
 
   #############################
   # generate the URL to query #
@@ -47,8 +48,13 @@ searchnlm <- function(term, retmax = NA, email = NA) {
   if(length(term) > 1) {
     term <- cat(term, sep = "+OR+")
   }
-  # add the term prefix
+  # add field to term if it exists
+  if(!is.na(field)) {
+    term <- paste0("dc:", field, ":", term)
+  }
+  # add the term prefix (must be last step)
   term <- paste0("&term=", term)
+  # combine term with the base url
   url <- paste0("https://wsearch.nlm.nih.gov/ws/query?db=digitalCollections", term)
   # add retmax to url if it exists
   if(!is.na(retmax)) {
@@ -58,6 +64,7 @@ searchnlm <- function(term, retmax = NA, email = NA) {
   if(!is.na(email)) {
     url <- paste0(url, "&email=", email)
   }
+  print(url)
 
   ##################################################
   # execute the query and parse the XML it returns #
