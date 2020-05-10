@@ -2,9 +2,9 @@ Package: tidynlm
 Type: Package
 Title: API Wrapper for the National Library of Medicine
 Version: 0.1.0
-Author: Jackson Luckey
-Maintainer: Jackson Luckey <jacksonmluckey@gmail.com>
-Description: Queries the National Library of Medicine and returns results in a tidy format.
+Authors@R: person("Jackson", "Luckey", email = "jacksonmluckey@gmail.com",
+  role = c("aut", "cre"))
+Description: Queries the National Library of Medicine and returns results in a tidy format. Currently 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
