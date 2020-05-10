@@ -1,11 +1,10 @@
 Package: tidynlm
 Type: Package
-Title: What the Package Does (Title Case)
+Title: API Wrapper for the National Library of Medicine
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Jackson Luckey
+Maintainer: Jackson Luckey <jacksonmluckey@gmail.com>
+Description: Queries the National Library of Medicine and returns results in a tidy format.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
