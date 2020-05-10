@@ -34,9 +34,9 @@ parse_document <- function(document) {
 #' @param email Your email address as a string. Optional--it allows the National Library of Medicine to contact you if there are problems with your queries.
 #'
 #' @example searchnlm("opioid")
+#' @example searchnlm("cholera", field = "subject")
+#' @return Returns a dataframe where each row is a field of a record in the NLM databse. Rank and url uniquely identify the works in the NLM database.
 #' @export
-# term can be passed as a string with spaces, which will be treated as ANDs
-# or as a a character vector, where each element will be treated as ORs (in the future)
 searchnlm <- function(term, field = NA, retmax = NA, email = NA) {
 
   #############################

@@ -5,9 +5,10 @@ Version: 0.1.0
 Authors@R: person("Jackson", "Luckey", email = "jacksonmluckey@gmail.com",
   role = c("aut", "cre"))
 Description: Queries the National Library of Medicine and returns results in a tidy format. Currently 
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
   tidyverse,
   xml2
+RoxygenNote: 7.1.0
