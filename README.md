@@ -1,16 +1,14 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # tidynlm
 
-<!-- badges: start -->
+## Overview
 
-<!-- badges: end -->
-
-tidynlm provides easy access to the National Library of Medicine API
-from within R. The library currently allows the user to create a
-dataframe of documents matching a particular search query. The documents
-themselves can be accessed with the urls in the `url` column of the
+tidynlm provides easy access to the National Library of Medicine (NLM)
+API from within R. The package allows the user to create a dataframe of
+NLM documents matching a particular search query using the function
+`searchnlm`. The resulting dataframe contains information on attributes
+such as authorship and date and place of publication. The documents
+themselves can be accessed with the urls in the url column of the
 resulting dataframe.
 
 ## Installation
@@ -23,9 +21,19 @@ You can install the released version of tidynlm from
 devtools::install_github("https://github.com/Reed-Statistics/book_trackR")
 ```
 
-## Cholera Demo
+## Usage
 
-This is a basic example which shows you how to solve a common problem:
+`tidynlm` gives access to the NLM API through the function `searchnlm`,
+which accepts the arguments:
+
+  - `term` is the search term(s)
+  - `field` is the field to search in
+  - `retmax` is the number of documents to search
+  - `email` allows the NLM to track your API requests
+  - `output` determines if a row is a field or a document
+  - `collapse_to_first` removes duplicated fields if set to TRUE
+
+<!-- end list -->
 
 ``` r
 library(tidynlm)
@@ -42,7 +50,40 @@ library(tidyverse)
 #> -- Conflicts -------------------------------------------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
+
+# see the first 10 field-value pairs of Cholera documents
+searchnlm(term = "cholera", retmax = 10) %>%
+  print()
+#> NULL
+
+# see the first 100 Cholera documents with the possibility of duplicated fields in the form of list-cols
+searchnlm(term = "cholera", retmax = 100, output = "wide") %>%
+  print()
+#> NULL
+
+# query the NLM database for documents pertaining to Cholera and drop duplicated fields
 cholera <- searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first = TRUE)
+print(cholera)
+#> # A tibble: 2,000 x 17
+#> # Groups:   rank, url [2,000]
+#>   rank  url   dc.date title creator subject description Publication contributor
+#>   <chr> <chr> <chr>   <chr> <chr>   <chr>   <chr>       <chr>       <chr>      
+#> 1 0     http~ 1881    "The~ Bell, ~ "Diarr~ 2nd ed. / ~ New York :~ Laird, W. ~
+#> 2 1     http~ 1888    "The~ Bell, ~ "Diarr~ 3rd ed      Philadelph~ <NA>       
+#> 3 2     http~ 1870    "The~ Bell, ~ "Gastr~ <NA>        New York, ~ <NA>       
+#> 4 3     http~ 1893    "The~ Majumd~ "<span~ <NA>        Philadelph~ <NA>       
+#> 5 4     http~ 1852    "<sp~ Balfou~ "<span~ <NA>        Madras : F~ <NA>       
+#> # ... with 1,995 more rows, and 8 more variables: format <chr>,
+#> #   identifier <chr>, language <chr>, rights <chr>, snippet <chr>, type <chr>,
+#> #   coverage <chr>, relation <chr>
+```
+
+In this example, we will chart the number of documents pertaining to
+Cholera in the National Library of Medicine by year. To do so, we will
+first query the NLM database using `searchnlm`. We will then aggregate
+the resulting dataframe by year and plot it.
+
+``` r
 cholera %>%
   mutate(dc.date = as.numeric(dc.date)) %>%
   group_by(dc.date) %>%
@@ -59,4 +100,4 @@ cholera %>%
 #> Warning: Removed 8 rows containing missing values (geom_point).
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-choleraDocumentsByYearGraph-1.png" width="100%" />
