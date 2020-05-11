@@ -7,52 +7,91 @@
 \url{https://collections.nlm.nih.gov/web_service.html}
 }
 \usage{
-searchnlm(term, field = NA, retmax = NA, email = NA)
+searchnlm(
+  term,
+  field = NA,
+  retmax = NA,
+  email = NA,
+  output = "tall",
+  collapse_to_first = FALSE
+)
 }
 \arguments{
-\item{term}{The search term to query. By default spaces will be parsed as ANDs, and seperate elements in the vector as ORs.}
+\item{term}{The search term to query. By default spaces will be parsed as
+ANDs, and seperate elements in the vector as ORs.}
 
-\item{field}{The field to query. Defaults to querying all fields. Includes choices such as "creator", "subject", "title", and "description", which are detailed below.}
+\item{field}{The field to query. Defaults to querying all fields. Includes
+choices such as "creator", "subject", "title", and "description", which are
+detailed below.}
 
 \item{retmax}{The number of observations you want to query. Defaults to 10.}
 
-\item{email}{Your email address as a string. Optional--it allows the National Library of Medicine to contact you if there are problems with your queries.}
+\item{email}{Your email address as a string. Optional--it allows the National
+Library of Medicine to contact you if there are problems with your queries.}
+
+\item{output}{Defaults to "tall", where each row of the returned dataframe is
+a value of a document. If set to "wide", each row is a document.}
+
+\item{collapse_to_first}{If TRUE when output = "wide", then only the first
+element of that name-value pair will be included (e.g. the first date). Set
+to TRUE when working with dates.}
 }
 \value{
-Returns a dataframe where each row is a field of a record in the NLM databse. Rank and url uniquely identify the works in the NLM database.
+By default, returns a dataframe where each row is a field of a record
+  in the NLM databse. If output is set to "wide", returns a dataframe where
+  each row is a document in the NLM database. On "wide" mode, a column can be
+  a list containing multiple values. Rank and url uniquely identify the works
+  in the NLM database.
 }
 \description{
-Search the National Library of Medicine
+searchnlm queries the National Library of Medicine database and returns a
+dataframe containing records on the documents captured by the query. When
+output is set to wide, each row of the dataframe will be a document.
+Otherwise, each row will be a field corresponding to a document.
 }
 \section{Available Fields}{
 
 
-Creator: Individual author or organization responsible for the intellectual content of the resource; this field may also include contributors to the content, to the publication, or to the provenance of the resource.
+  Creator: Individual author or organization responsible for the intellectual
+  content of the resource; this field may also include contributors to the
+  content, to the publication, or to the provenance of the resource.
 
-Coverage: Geographic subjects of the resource
+  Coverage: Geographic subjects of the resource
 
-Date: Publication or copyright dates
+  Date: Publication or copyright dates
 
-Description: Brief description of the content of the resource and/or notes regarding the resource, such as credits, gift/donor information, NLM permanence rating, et al.
+  Description: Brief description of the content of the resource and/or notes
+  regarding the resource, such as credits, gift/donor information, NLM
+  permanence rating, et al.
 
-Format: May include the physical or digital manifestation of the resource (such as Text, Moving image, etc.), illustrative content, and extent information.
+  Format: May include the physical or digital manifestation of the resource
+  (such as Text, Moving image, etc.), illustrative content, and extent
+  information.
 
-Identifier: Identifiers include the Permanent URL of the resource in Digital Collections and the NLM Unique Identifier (NLMUID); other potential identifiers may include ISSN, ISBN, LCCN or OCLC numbers.
+  Identifier: Identifiers include the Permanent URL of the resource in
+  Digital Collections and the NLM Unique Identifier (NLMUID); other potential
+  identifiers may include ISSN, ISBN, LCCN or OCLC numbers.
 
-Language: Language of the intellectual content of the resource. Values include English, French, German, Greek, Hawaiian, Latin, Portuguese, Spanish, etc.
+  Language: Language of the intellectual content of the resource. Values
+  include English, French, German, Greek, Hawaiian, Latin, Portuguese,
+  Spanish, etc.
 
-Publisher: Imprint statement, which may include the publisher, the distributor, the place of publication or distribution, and date(s) of publication or copyright.
+  Publisher: Imprint statement, which may include the publisher, the
+  distributor, the place of publication or distribution, and date(s) of
+  publication or copyright.
 
-Relation: A reference to a related resource.
+  Relation: A reference to a related resource.
 
-Rights: Information about rights held in and over the resource.
+  Rights: Information about rights held in and over the resource.
 
-Subject: Subjects (both topical and persons) of the resource; topical subjects are from the Medical Subject Heading (MeSH) vocabulary.
+  Subject: Subjects (both topical and persons) of the resource; topical
+  subjects are from the Medical Subject Heading (MeSH) vocabulary.
 
-Title: Main and variant titles (including series titles) for the resource.
+  Title: Main and variant titles (including series titles) for the resource.
 
-Type: Nature or genre of the content of the resource.
+  Type: Nature or genre of the content of the resource.
 
-Snippet: Brief result summary generated by the search engine that provides a preview of the relevant content from the resource's full-text.
+  Snippet: Brief result summary generated by the search engine that provides
+  a preview of the relevant content from the resource's full-text.
 }
 

@@ -1,4 +1,7 @@
 # grabs an element from within a NLM document
+# NAs declared to keep things explicit
+#' @importFrom xml2 xml_attr
+#' @importFrom magrittr %>%
 extract_content <- function(raw_content) {
   # generate an empty named list
   content <- list(NA, NA)
@@ -10,12 +13,14 @@ extract_content <- function(raw_content) {
   content
 }
 
-# takes a "row", aka a document, returned by searchnlm() and restructures it as
-# a list that can be converted into a dataframe
+#takes a "row", aka a document, returned by searchnlm() and restructures it as a
+#list that can be converted into a dataframe
+#' @importFrom xml2 xml_attr xml_children
+#' @importFrom magrittr %>%
 parse_document <- function(document) {
   parsed <- document %>%
     xml_children() %>%
-    map_dfr(extract_content)
+    purrr::map_dfr(extract_content)
   # rank uniquely identifies a document -> useful for later group_by
   parsed["rank"] <- xml_attr(document, "rank")
   # permanent url to that document (making it a valid, although verbose, unique id)
@@ -31,18 +36,27 @@ parse_document <- function(document) {
 #' Otherwise, each row will be a field corresponding to a document.
 #'
 #' @param term The search term to query. By default spaces will be parsed as
-#'   ANDs, and seperate elements in the vector as ORs.
+#'   ANDs, and seperate elements in the vector as ORs. Use "%22" to indicate a
+#'   phrase query.
 #' @param field The field to query. Defaults to querying all fields. Includes
 #'   choices such as "creator", "subject", "title", and "description", which are
 #'   detailed below.
 #' @param retmax The number of observations you want to query. Defaults to 10.
 #' @param email Your email address as a string. Optional--it allows the National
 #'   Library of Medicine to contact you if there are problems with your queries.
+#' @param output Defaults to "tall", where each row of the returned dataframe is
+#'   a value of a document. If set to "wide", each row is a document.
+#' @param collapse_to_first If TRUE when output = "wide", then only the first
+#'   element of that name-value pair will be included (e.g. the first date). Set
+#'   to TRUE when working with dates.
+#' @param print_url If TRUE, prints the URL queried
 #' @example searchnlm("cholera", field = "subject")
 #' @return By default, returns a dataframe where each row is a field of a record
 #'   in the NLM databse. If output is set to "wide", returns a dataframe where
-#'   each row is a document in the NLM database. Rank and url uniquely identify
-#'   the works in the NLM database.
+#'   each row is a document in the NLM database. On "wide" mode, a column can be
+#'   a list containing multiple values. Rank and url uniquely identify the works
+#'   in the NLM database.
+#'
 #' @example searchnlm("opioid")
 #' @example searchnlm("cholera", retmax = 2000, output = "wide")
 #'
@@ -94,7 +108,7 @@ parse_document <- function(document) {
 #' @importFrom magrittr %>%
 #' @export
 #' @source \url{https://collections.nlm.nih.gov/web_service.html}
-searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall") {
+searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall", collapse_to_first = FALSE, print_url = FALSE) {
 
   #############################
   # generate the URL to query #
@@ -121,7 +135,9 @@ searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall"
   if(!is.na(email)) {
     url <- paste0(url, "&email=", email)
   }
-  print(url)
+  if(print_url == TRUE) {
+    print(url)
+  }
 
   ##################################################
   # execute the query and parse the XML it returns #
@@ -131,10 +147,10 @@ searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall"
     # ".//document" is a single document in the NLM database
     xml_find_all(".//document")
   df <- documents %>%
-    map_dfr(parse_document)
+    purrr::map_dfr(parse_document)
   # remove "dc:" from name column
   df <- df %>%
-    mutate(name = str_remove(name, "dc:"))
+    dplyr::mutate(name = stringr::str_remove(name, "dc:"))
 
   ###########################
   # prepare final dataframe #
@@ -151,7 +167,7 @@ searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall"
   if(output == "wide") {
     df %>%
       dplyr::group_by(rank, url) %>%
-      dplyr::pivot_wider(values_fn = list(value = list)) # uses list-cols for duplicates
+      tidyr::pivot_wider(values_fn = list(value = list)) # uses list-cols for duplicates
   }
 
 }
