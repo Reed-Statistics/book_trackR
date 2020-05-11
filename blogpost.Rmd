@@ -1,0 +1,38 @@
+---
+title: "tidynlm Blogpost"
+author: "Jackson M Luckey"
+date: "5/11/2020"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loadLibraries, echo=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidynlm)
+```
+
+# tidynlm
+
+`tidynlm` provides easy access to the National Library of Medicine (NLM) API from within R. The package allows the user to create a dataframe of NLM documents matching a particular search query using the function `searchnlm`. The resulting dataframe contains information on attributes such as authorship and date and place of publication. The documents themselves can be accessed with the urls in the url column of the resulting dataframe. I wrote the package because I could not find another convenient way to query the NLM database.
+
+## Installation
+
+You can install tidynlm from [GitHub](https://github.com/Reed-Statistics/book_trackR) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("https://github.com/Reed-Statistics/book_trackR")
+```
+
+## How tidynlm Works
+
+APIs, or Application Programmable Interface, is a specification for how software components communicate with each other. In this case, the API provides access to the National Library of Medicine's database of medical documents. `tidynlm` is an API wrapper, menaing that it writes and executes API queries on the user's behalf. In order to do so, `searchnlm`--the main function of `tidynlm`--manipulates its inputs (e.g. `term`, `field`) into a URL. It then loads the XML document that the URL provides access to, and parses it into a dataframe. More information about the National Library of Medicine API is available [here](https://collections.nlm.nih.gov/web_service.html "National Library of Medicine API").
+
+`searchnlm` starts by reformatting the `term` input to match the NLM's API. It replaces spaces with "+"s to represent ANDs, and collapses the vector into a single string seperated by "+OR+"s to represent ORs. If `field` is included, it prefixes the term in "dc:field:". Finally, the whole term is added to "https://wsearch.nlm.nih.gov/ws/query?db=digitalCollection&term=", which is the base URL for the NLM API. By base URL, I mean the part of the URL that is the same for all API requests.
+
+## Cholera
+
+(The code behind this aspect of the blog post is borrowed from the `cholera` vignette of `tidynlm`.)

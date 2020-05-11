@@ -3,7 +3,7 @@
 
 ## Overview
 
-tidynlm provides easy access to the National Library of Medicine (NLM)
+`tidynlm` provides easy access to the National Library of Medicine (NLM)
 API from within R. The package allows the user to create a dataframe of
 NLM documents matching a particular search query using the function
 `searchnlm`. The resulting dataframe contains information on attributes
@@ -13,7 +13,7 @@ resulting dataframe.
 
 ## Installation
 
-You can install the released version of tidynlm from
+You can install tidynlm from
 [GitHub](https://github.com/Reed-Statistics/book_trackR) with:
 
 ``` r
@@ -89,7 +89,7 @@ searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first =
 #> 2 1     http~ 1888  "The~ Bell, ~ "Diarr~ 3rd ed      Philadelph~ <NA>       
 #> 3 2     http~ 1870  "The~ Bell, ~ "Gastr~ <NA>        New York, ~ <NA>       
 #> 4 3     http~ 1893  "The~ Majumd~ "<span~ <NA>        Philadelph~ <NA>       
-#> 5 4     http~ 1884  "How~ <NA>    "<span~ <NA>        London : G~ <NA>       
+#> 5 4     http~ 1852  "<sp~ Balfou~ "<span~ <NA>        Madras : F~ <NA>       
 #> # ... with 1,995 more rows, and 8 more variables: format <chr>,
 #> #   identifier <chr>, language <chr>, rights <chr>, snippet <chr>, type <chr>,
 #> #   coverage <chr>, relation <chr>

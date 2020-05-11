@@ -16,11 +16,11 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 ## Overview
 
-tidynlm provides easy access to the National Library of Medicine (NLM) API from within R. The package allows the user to create a dataframe of NLM documents matching a particular search query using the function `searchnlm`. The resulting dataframe contains information on attributes such as authorship and date and place of publication. The documents themselves can be accessed with the urls in the url column of the resulting dataframe.
+`tidynlm` provides easy access to the National Library of Medicine (NLM) API from within R. The package allows the user to create a dataframe of NLM documents matching a particular search query using the function `searchnlm`. The resulting dataframe contains information on attributes such as authorship and date and place of publication. The documents themselves can be accessed with the urls in the url column of the resulting dataframe.
 
 ## Installation
 
-You can install the released version of tidynlm from [GitHub](https://github.com/Reed-Statistics/book_trackR) with:
+You can install tidynlm from [GitHub](https://github.com/Reed-Statistics/book_trackR) with:
 
 ``` r
 # install.packages("devtools")
