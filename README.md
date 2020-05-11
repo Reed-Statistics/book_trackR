@@ -32,6 +32,7 @@ which accepts the arguments:
   - `email` allows the NLM to track your API requests
   - `output` determines if a row is a field or a document
   - `collapse_to_first` removes duplicated fields if set to TRUE
+  - `print_url` prints the queried URL if set to TRUE
 
 <!-- end list -->
 
@@ -54,11 +55,13 @@ library(tidyverse)
 # see the first 10 field-value pairs of Cholera documents
 searchnlm(term = "cholera", retmax = 10) %>%
   print()
+#> [1] "check if triggered: tall"
 #> NULL
 
 # see the first 100 Cholera documents with the possibility of duplicated fields in the form of list-cols
 searchnlm(term = "cholera", retmax = 100, output = "wide") %>%
   print()
+#> [1] "check if triggered: wide without listcols"
 #> NULL
 
 # query the NLM database for documents pertaining to Cholera and drop duplicated fields

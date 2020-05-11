@@ -37,6 +37,7 @@ devtools::install_github("https://github.com/Reed-Statistics/book_trackR")
 * `email` allows the NLM to track your API requests
 * `output` determines if a row is a field or a document
 * `collapse_to_first` removes duplicated fields if set to TRUE
+* `print_url` prints the queried URL if set to TRUE
 
 ```{r Example}
 library(tidynlm)
