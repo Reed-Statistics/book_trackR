@@ -1,3 +1,4 @@
+# grabs an element from within a NLM document
 extract_content <- function(raw_content) {
   # generate an empty named list
   content <- list(NA, NA)
@@ -9,11 +10,13 @@ extract_content <- function(raw_content) {
   content
 }
 
+# takes a "row", aka a document, returned by searchnlm() and restructures it as
+# a list that can be converted into a dataframe
 parse_document <- function(document) {
   parsed <- document %>%
     xml_children() %>%
     map_dfr(extract_content)
-  # rank uniquely identifies a document within a query?
+  # rank uniquely identifies a document -> useful for later group_by
   parsed["rank"] <- xml_attr(document, "rank")
   # permanent url to that document (making it a valid, although verbose, unique id)
   parsed["url"] <- xml_attr(document, "url")
@@ -22,44 +25,70 @@ parse_document <- function(document) {
 
 #' Search the National Library of Medicine
 #'
-#' @param term The search term to query. By default spaces will be parsed as ANDs, and seperate elements in the vector as ORs.
-#' @param field The field to query. Defaults to querying all fields. Includes choices such as "creator", "subject", "title", and "description", which are detailed below.
+#' searchnlm queries the National Library of Medicine database and returns a
+#' dataframe containing records on the documents captured by the query. When
+#' output is set to wide, each row of the dataframe will be a document.
+#' Otherwise, each row will be a field corresponding to a document.
+#'
+#' @param term The search term to query. By default spaces will be parsed as
+#'   ANDs, and seperate elements in the vector as ORs.
+#' @param field The field to query. Defaults to querying all fields. Includes
+#'   choices such as "creator", "subject", "title", and "description", which are
+#'   detailed below.
 #' @param retmax The number of observations you want to query. Defaults to 10.
-#' @param email Your email address as a string. Optional--it allows the National Library of Medicine to contact you if there are problems with your queries.
+#' @param email Your email address as a string. Optional--it allows the National
+#'   Library of Medicine to contact you if there are problems with your queries.
 #' @example searchnlm("cholera", field = "subject")
-#' @return By default, returns a dataframe where each row is a field of a record in the NLM databse. If output is set to "wide", returns a dataframe where each row is a document in the NLM database. Rank and url uniquely identify the works in the NLM database.
+#' @return By default, returns a dataframe where each row is a field of a record
+#'   in the NLM databse. If output is set to "wide", returns a dataframe where
+#'   each row is a document in the NLM database. Rank and url uniquely identify
+#'   the works in the NLM database.
 #' @example searchnlm("opioid")
 #' @example searchnlm("cholera", retmax = 2000, output = "wide")
 #'
 #' @section Available Fields:
 #'
-#' Creator: Individual author or organization responsible for the intellectual content of the resource; this field may also include contributors to the content, to the publication, or to the provenance of the resource.
+#'   Creator: Individual author or organization responsible for the intellectual
+#'   content of the resource; this field may also include contributors to the
+#'   content, to the publication, or to the provenance of the resource.
 #'
-#' Coverage: Geographic subjects of the resource
+#'   Coverage: Geographic subjects of the resource
 #'
-#' Date: Publication or copyright dates
+#'   Date: Publication or copyright dates
 #'
-#' Description: Brief description of the content of the resource and/or notes regarding the resource, such as credits, gift/donor information, NLM permanence rating, et al.
+#'   Description: Brief description of the content of the resource and/or notes
+#'   regarding the resource, such as credits, gift/donor information, NLM
+#'   permanence rating, et al.
 #'
-#' Format: May include the physical or digital manifestation of the resource (such as Text, Moving image, etc.), illustrative content, and extent information.
+#'   Format: May include the physical or digital manifestation of the resource
+#'   (such as Text, Moving image, etc.), illustrative content, and extent
+#'   information.
 #'
-#' Identifier: Identifiers include the Permanent URL of the resource in Digital Collections and the NLM Unique Identifier (NLMUID); other potential identifiers may include ISSN, ISBN, LCCN or OCLC numbers.
+#'   Identifier: Identifiers include the Permanent URL of the resource in
+#'   Digital Collections and the NLM Unique Identifier (NLMUID); other potential
+#'   identifiers may include ISSN, ISBN, LCCN or OCLC numbers.
 #'
-#' Language: Language of the intellectual content of the resource. Values include English, French, German, Greek, Hawaiian, Latin, Portuguese, Spanish, etc.
+#'   Language: Language of the intellectual content of the resource. Values
+#'   include English, French, German, Greek, Hawaiian, Latin, Portuguese,
+#'   Spanish, etc.
 #'
-#' Publisher: Imprint statement, which may include the publisher, the distributor, the place of publication or distribution, and date(s) of publication or copyright.
+#'   Publisher: Imprint statement, which may include the publisher, the
+#'   distributor, the place of publication or distribution, and date(s) of
+#'   publication or copyright.
 #'
-#' Relation: A reference to a related resource.
+#'   Relation: A reference to a related resource.
 #'
-#' Rights: Information about rights held in and over the resource.
+#'   Rights: Information about rights held in and over the resource.
 #'
-#' Subject: Subjects (both topical and persons) of the resource; topical subjects are from the Medical Subject Heading (MeSH) vocabulary.
+#'   Subject: Subjects (both topical and persons) of the resource; topical
+#'   subjects are from the Medical Subject Heading (MeSH) vocabulary.
 #'
-#' Title: Main and variant titles (including series titles) for the resource.
+#'   Title: Main and variant titles (including series titles) for the resource.
 #'
-#' Type: Nature or genre of the content of the resource.
+#'   Type: Nature or genre of the content of the resource.
 #'
-#' Snippet: Brief result summary generated by the search engine that provides a preview of the relevant content from the resource's full-text.
+#'   Snippet: Brief result summary generated by the search engine that provides
+#'   a preview of the relevant content from the resource's full-text.
 #'
 #' @import xml2
 #' @importFrom magrittr %>%
