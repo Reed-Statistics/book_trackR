@@ -53,29 +53,47 @@ library(tidyverse)
 #> x dplyr::lag()    masks stats::lag()
 
 # see the first 10 field-value pairs of Cholera documents
-searchnlm(term = "cholera", retmax = 10) %>%
+searchnlm(term = "cholera", retmax = 10, print_url = TRUE) %>%
   print()
-#> [1] "check if triggered: tall"
-#> NULL
+#> [1] "https://wsearch.nlm.nih.gov/ws/query?db=digitalCollections&term=cholera&retmax=10"
+#> # A tibble: 130 x 4
+#>   name    value                                      rank  url                  
+#>   <chr>   <chr>                                      <chr> <chr>                
+#> 1 date    "1881"                                     0     https://resource.nlm~
+#> 2 title   "The homoeopathic therapeutics of diarrho~ 0     https://resource.nlm~
+#> 3 title   "Therapeutics of diarrhoea"                0     https://resource.nlm~
+#> 4 creator "Bell, James B. (James Bachelder), 1838-1~ 0     https://resource.nlm~
+#> 5 subject "Diarrhea -- drug therapy"                 0     https://resource.nlm~
+#> # ... with 125 more rows
 
 # see the first 100 Cholera documents with the possibility of duplicated fields in the form of list-cols
 searchnlm(term = "cholera", retmax = 100, output = "wide") %>%
   print()
-#> [1] "check if triggered: wide without listcols"
-#> NULL
+#> # A tibble: 100 x 16
+#> # Groups:   rank, url [100]
+#>   rank  url   date  title creator subject description Publication contributor
+#>   <chr> <chr> <lis> <lis> <list>  <list>  <list>      <list>      <list>     
+#> 1 0     http~ <chr~ <chr~ <chr [~ <chr [~ <chr [1]>   <chr [1]>   <chr [1]>  
+#> 2 1     http~ <chr~ <chr~ <chr [~ <chr [~ <chr [1]>   <chr [1]>   <NULL>     
+#> 3 2     http~ <chr~ <chr~ <chr [~ <chr [~ <NULL>      <chr [1]>   <NULL>     
+#> 4 3     http~ <chr~ <chr~ <chr [~ <chr [~ <NULL>      <chr [1]>   <NULL>     
+#> 5 4     http~ <chr~ <chr~ <NULL>  <chr [~ <NULL>      <chr [1]>   <NULL>     
+#> # ... with 95 more rows, and 7 more variables: format <list>,
+#> #   identifier <list>, language <list>, rights <list>, snippet <list>,
+#> #   type <list>, coverage <list>
 
 # query the NLM database for documents pertaining to Cholera and drop duplicated fields
 cholera <- searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first = TRUE)
 print(cholera)
 #> # A tibble: 2,000 x 17
 #> # Groups:   rank, url [2,000]
-#>   rank  url   dc.date title creator subject description Publication contributor
-#>   <chr> <chr> <chr>   <chr> <chr>   <chr>   <chr>       <chr>       <chr>      
-#> 1 0     http~ 1881    "The~ Bell, ~ "Diarr~ 2nd ed. / ~ New York :~ Laird, W. ~
-#> 2 1     http~ 1888    "The~ Bell, ~ "Diarr~ 3rd ed      Philadelph~ <NA>       
-#> 3 2     http~ 1870    "The~ Bell, ~ "Gastr~ <NA>        New York, ~ <NA>       
-#> 4 3     http~ 1893    "The~ Majumd~ "<span~ <NA>        Philadelph~ <NA>       
-#> 5 4     http~ 1852    "<sp~ Balfou~ "<span~ <NA>        Madras : F~ <NA>       
+#>   rank  url   date  title creator subject description Publication contributor
+#>   <chr> <chr> <chr> <chr> <chr>   <chr>   <chr>       <chr>       <chr>      
+#> 1 0     http~ 1881  "The~ Bell, ~ "Diarr~ 2nd ed. / ~ New York :~ Laird, W. ~
+#> 2 1     http~ 1888  "The~ Bell, ~ "Diarr~ 3rd ed      Philadelph~ <NA>       
+#> 3 2     http~ 1870  "The~ Bell, ~ "Gastr~ <NA>        New York, ~ <NA>       
+#> 4 3     http~ 1893  "The~ Majumd~ "<span~ <NA>        Philadelph~ <NA>       
+#> 5 4     http~ 1884  "How~ <NA>    "<span~ <NA>        London : G~ <NA>       
 #> # ... with 1,995 more rows, and 8 more variables: format <chr>,
 #> #   identifier <chr>, language <chr>, rights <chr>, snippet <chr>, type <chr>,
 #> #   coverage <chr>, relation <chr>
@@ -88,11 +106,11 @@ the resulting dataframe by year and plot it.
 
 ``` r
 cholera %>%
-  mutate(dc.date = as.numeric(dc.date)) %>%
-  group_by(dc.date) %>%
+  mutate(date = as.numeric(date)) %>%
+  group_by(date) %>%
   count() %>%
   ungroup() %>%
-  ggplot(aes(x = dc.date, y = n)) +
+  ggplot(aes(x = date, y = n)) +
   geom_point() +
   xlim(1770, 2020) +
   theme_classic() +

@@ -44,7 +44,7 @@ library(tidynlm)
 library(tidyverse)
 
 # see the first 10 field-value pairs of Cholera documents
-searchnlm(term = "cholera", retmax = 10) %>%
+searchnlm(term = "cholera", retmax = 10, print_url = TRUE) %>%
   print()
 
 # see the first 100 Cholera documents with the possibility of duplicated fields in the form of list-cols
@@ -60,11 +60,11 @@ In this example, we will chart the number of documents pertaining to Cholera in 
 
 ```{r choleraDocumentsByYearGraph}
 cholera %>%
-  mutate(dc.date = as.numeric(dc.date)) %>%
-  group_by(dc.date) %>%
+  mutate(date = as.numeric(date)) %>%
+  group_by(date) %>%
   count() %>%
   ungroup() %>%
-  ggplot(aes(x = dc.date, y = n)) +
+  ggplot(aes(x = date, y = n)) +
   geom_point() +
   xlim(1770, 2020) +
   theme_classic() +

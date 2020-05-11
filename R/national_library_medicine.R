@@ -161,21 +161,25 @@ searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall"
   if(!(output %in% c("tall", "wide"))) {
     stop(output, " is not a valid input for the argument \"output\". Please input \"tall\" or \"wide\"")
   }
-  # is in tall form by default
-  if(output == "tall") {
-    df
-  }
+  # prepare final form based on output and collapse_to_first
+  # structured in this weird way to prevent the NULL bug
   # wide form
   # collapse_to_first determines if list cols should be used
-  if(output == "wide" & collapse_to_first == FALSE) {
-    df %>%
-      dplyr::group_by(rank, url) %>%
-      tidyr::pivot_wider(values_fn = list(value = list)) # uses list-cols for duplicates
-  }
   if(output == "wide" & collapse_to_first == TRUE) {
     df %>%
       dplyr::group_by(rank, url) %>%
       tidyr::pivot_wider(values_fn = list(value = first)) # uses first element
+  } else if(output == "wide" & collapse_to_first == FALSE) {
+    df %>%
+      dplyr::group_by(rank, url) %>%
+      tidyr::pivot_wider(values_fn = list(value = list)) # uses list-cols for duplicates
+  # is in tall form by default
+  } else if(output == "tall") {
+    df
+  } else {
+    # just a backup in case the weird NULL bug occurs again
+    # where dataframes become NULL inside of this section
+    df
   }
 
 }
