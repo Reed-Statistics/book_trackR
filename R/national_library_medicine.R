@@ -148,9 +148,10 @@ searchnlm <- function(term, field = NA, retmax = NA, email = NA, output = "tall"
     xml_find_all(".//document")
   df <- documents %>%
     purrr::map_dfr(parse_document)
-  # remove "dc:" from name column
+  # remove "dc:" and "dc." from name column
   df <- df %>%
-    dplyr::mutate(name = stringr::str_remove(name, "dc:"))
+    dplyr::mutate(name = stringr::str_remove(name, "dc:")) %>% # for all other fields
+    dplyr::mutate(name = stringr::str_remove(name, "dc.")) # for dc.date
 
   ###########################
   # prepare final dataframe #
