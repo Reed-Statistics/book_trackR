@@ -1,5 +1,5 @@
 ---
-title: "cholera"
+title: "Cholera"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{cholera}
@@ -16,4 +16,86 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(tidynlm)
+library(tidyverse)
+```
+
+# Cholera
+
+Cholera is a "is an acute diarrhoeal infection caused by ingestion of food or water contaminated with the bacterium *Vibrio cholerae*". Modern public health partially emerged from combating Cholera, which is often spread through contaminated water supplies. The disease is easily controlled with sanitation and hygiene, but without it, the disease causes deadly cyclical epidemics. You can find out more about Cholera from the [World Health Organization](https://www.who.int/news-room/fact-sheets/detail/cholera "World Health Organization: Cholera") and the [Center for Disease Control](https://www.cdc.gov/cholera/general/index.html "Center for Disease Control: Cholera").
+
+## Documents per Year
+
+```{r choleraData}
+cholera <- searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first = TRUE)
+```
+
+In this example, we will chart the number of documents pertaining to Cholera in the National Library of Medicine by year. To do so, we will first query the NLM database using `searchnlm` with output set to "wide" and collapse_to_first set to TRUE. This ensures that each row is a document, and that none of the variables are list-columns. We will then aggregate the resulting dataframe by year and plot it. As can be seen below, the National Library of Medicine's documents on Cholera primarily date to the later half of the 19th century.
+
+```{r choleraDocumentsByYearGraph, echo=TRUE}
+ cholera %>%
+  mutate(date = as.numeric(date)) %>%
+  group_by(date) %>%
+  count() %>%
+  ungroup() %>%
+  ggplot(aes(x = date, y = n)) +
+  geom_point() +
+  xlim(1770, 2020) +
+  theme_classic() +
+  labs(x = "Year",
+       y = "Number of Documents",
+       title = "Number of Documents Involving Cholera by Year",
+       subtitle = "National Library of Medicine")
+```
+
+## Language
+
+Does the language the document was written in have any correlation with when the document was written? To answer this question, we will start by examining the language composition of the documents. As you can see below, the vast majority of the documents were written in English.
+
+```{r choleraLanguage}
+cholera %>%
+  ggplot(aes(x = fct_infreq(language))) +
+  geom_bar() +
+  theme_classic() +
+  coord_flip() +
+  labs(x = "Language",
+       y = "Number of Documents",
+       title = "Language Composition of Documents Relating to Cholera",
+       subtitle = "National Library of Medicine")
+```
+
+```{r choleraLanguageDate}
+cholera %>%
+  mutate(date = as.numeric(date)) %>%
+  filter(date > 1750,
+         !is.na(language)) %>%
+  ggplot(aes(x = date, color = language)) +
+  geom_density() +
+  theme_classic() +
+  labs(x = "Date",
+       y = "Density of Publications",
+       color = "Language",
+       title = "Cholera Documents in NLM Database by Year and Language")
+```
+
+The figure above indicates that there may be some correlation between date of publication and language. It appears that English language publications peaked in 1850 and almost entirely ceased by 1900. In contrast, Portugese and German publications peaked in the late 1800s, and Spanish publications peaked in the early 1800s. Of course, given the low number of entries that were not in English, this correlation might just be statistical noise.
+
+## Geogrpahical Coverage
+
+As can be seen below, nine out of the ten most frequent geographies in the dataset are located in the USA or the UK. The one exception, India, was a British colony when the majority of the documents in the dataset were written.
+
+```{r choleraGeography}
+cholera %>%
+  filter(!is.na(coverage)) %>%
+  group_by(coverage) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(10) %>%
+  ggplot(aes(x = coverage, y = n)) +
+  geom_col() +
+  theme_classic() +
+  coord_flip() +
+  labs(title = "Top Ten Cholera Geographies",
+       subtitle = "National Library of Medicine",
+       x = "Geographical Coverage",
+       y = "Number of Documents")
 ```

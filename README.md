@@ -53,9 +53,7 @@ library(tidyverse)
 #> x dplyr::lag()    masks stats::lag()
 
 # see the first 10 field-value pairs of Cholera documents
-searchnlm(term = "cholera", retmax = 10, print_url = TRUE) %>%
-  print()
-#> [1] "https://wsearch.nlm.nih.gov/ws/query?db=digitalCollections&term=cholera&retmax=10"
+searchnlm(term = "cholera", retmax = 10)
 #> # A tibble: 130 x 4
 #>   name    value                                      rank  url                  
 #>   <chr>   <chr>                                      <chr> <chr>                
@@ -67,8 +65,7 @@ searchnlm(term = "cholera", retmax = 10, print_url = TRUE) %>%
 #> # ... with 125 more rows
 
 # see the first 100 Cholera documents with the possibility of duplicated fields in the form of list-cols
-searchnlm(term = "cholera", retmax = 100, output = "wide") %>%
-  print()
+searchnlm(term = "cholera", retmax = 100, output = "wide")
 #> # A tibble: 100 x 16
 #> # Groups:   rank, url [100]
 #>   rank  url   date  title creator subject description Publication contributor
@@ -83,8 +80,7 @@ searchnlm(term = "cholera", retmax = 100, output = "wide") %>%
 #> #   type <list>, coverage <list>
 
 # query the NLM database for documents pertaining to Cholera and drop duplicated fields
-cholera <- searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first = TRUE)
-print(cholera)
+searchnlm(term = "cholera", retmax = 10000, output = "wide", collapse_to_first = TRUE)
 #> # A tibble: 2,000 x 17
 #> # Groups:   rank, url [2,000]
 #>   rank  url   date  title creator subject description Publication contributor
@@ -98,27 +94,3 @@ print(cholera)
 #> #   identifier <chr>, language <chr>, rights <chr>, snippet <chr>, type <chr>,
 #> #   coverage <chr>, relation <chr>
 ```
-
-In this example, we will chart the number of documents pertaining to
-Cholera in the National Library of Medicine by year. To do so, we will
-first query the NLM database using `searchnlm`. We will then aggregate
-the resulting dataframe by year and plot it.
-
-``` r
-cholera %>%
-  mutate(date = as.numeric(date)) %>%
-  group_by(date) %>%
-  count() %>%
-  ungroup() %>%
-  ggplot(aes(x = date, y = n)) +
-  geom_point() +
-  xlim(1770, 2020) +
-  theme_classic() +
-  labs(x = "Year",
-       y = "Number of Documents",
-       title = "Number of Documents Involving Cholera by Year",
-       subtitle = "National Library of Medicine")
-#> Warning: Removed 8 rows containing missing values (geom_point).
-```
-
-<img src="man/figures/README-choleraDocumentsByYearGraph-1.png" width="100%" />
