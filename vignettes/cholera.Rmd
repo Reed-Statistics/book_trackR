@@ -2,7 +2,7 @@
 title: "Cholera"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{cholera}
+  %\VignetteIndexEntry{Cholera}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
